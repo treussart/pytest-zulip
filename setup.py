@@ -17,7 +17,7 @@ setup(
     version=__version__,
     url="https://github.com/treussart/pytest-zulip",
     license="BSD",
-    description="Send report on Zulip",
+    description="Pytest report plugin for Zulip",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     keywords="py.test pytest zulip report",

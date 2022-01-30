@@ -2,20 +2,21 @@ import os
 from typing import Union
 
 import pytest
-from _pytest.config import ExitCode, Config
+from _pytest.config import ExitCode, Config, PytestPluginManager
+from _pytest.config.argparsing import Parser
 from _pytest.main import Session
 from _pytest.terminal import TerminalReporter
 
 from pytest_zulip.zulip import send_message
 
 
-def pytest_addhooks(pluginmanager):
+def pytest_addhooks(pluginmanager: PytestPluginManager):
     from . import hooks
 
     pluginmanager.add_hookspecs(hooks)
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser: Parser):
     parser.addoption("--notify", action="store_true", help="Notify via Zulip")
 
 
@@ -36,7 +37,7 @@ def pytest_terminal_summary(
         terminalreporter.write_sep("-", "notification sent on Zulip")
 
 
-def pytest_configure(config):
+def pytest_configure(config: Config):
     if config.getoption("--notify") and (
         not os.environ.get("ZULIP_URL")
         or not os.environ.get("ZULIP_STREAM")

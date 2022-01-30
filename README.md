@@ -1,5 +1,7 @@
 # pytest-zulip
 
+Pytest report plugin for Zulip 
+
 ## installation
 
     pip install pytest-zulip
@@ -12,6 +14,10 @@
     ZULIP_TOPIC="TOPIC"
     ZULIP_STREAM="STREAM"
 
+Optional:
+
+    ZULIP_ELLIPSIS_CHAR="…"
+
 ## Add option to send message
 
     pytest --notify
@@ -21,3 +27,24 @@
     def pytest_zulip_create_content(session: Session, exitstatus: Union[int, ExitCode]) -> str:
         reporter = session.config.pluginmanager.get_plugin('terminalreporter')
         return str(reporter.stats.get('passed', []))
+
+## Dev
+
+### Change version
+
+edit
+
+    pytest_zulip/__init__.py
+
+commit
+
+    git commit -m "v0.1.0"
+
+tag
+
+    git tag v0.1.0
+
+### Build package
+
+    python -m build
+    twine upload dist/*
