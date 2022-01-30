@@ -4,6 +4,7 @@ from typing import Union
 import requests
 from _pytest.config import ExitCode
 from _pytest.main import Session
+from _pytest.terminal import TerminalReporter
 
 
 def send_message(session: Session, exitstatus: Union[int, ExitCode]):
@@ -16,7 +17,9 @@ def send_message(session: Session, exitstatus: Union[int, ExitCode]):
     content = session.config.hook.pytest_zulip_create_content(session=session, exitstatus=exitstatus)
     if not content:
         reporter = session.config.pluginmanager.get_plugin('terminalreporter')
+        reporter: TerminalReporter
         content = (
+            f"# Test {session.nodeid} {status}\n"
             f"Passed={len(reporter.stats.get('passed', []))} Failed={len(reporter.stats.get('failed', []))} "
             f"Skipped={len(reporter.stats.get('skipped', []))} Error={len(reporter.stats.get('error', []))}"
         )
@@ -24,7 +27,7 @@ def send_message(session: Session, exitstatus: Union[int, ExitCode]):
         "type": "stream",
         "to": os.environ.get("ZULIP_STREAM"),
         "topic": topic,
-        "content": content,
+        "content": _trim_string(content, 1000),
     }
     requests.post(
         url=os.environ.get("ZULIP_URL"),
@@ -34,3 +37,13 @@ def send_message(session: Session, exitstatus: Union[int, ExitCode]):
         ),
         data=payload,
     )
+
+
+def _trim_string(s: str, limit: int, ellipsis_char="…") -> str:
+    s = s.strip()
+    sb = s.encode("utf-8")
+    limit = limit - len(ellipsis_char.encode("utf-8"))
+    if len(sb) > limit:
+        sb_limited = sb[:limit]
+        return sb_limited.decode("utf-8").strip() + ellipsis_char
+    return s
