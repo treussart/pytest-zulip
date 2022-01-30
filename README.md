@@ -1,6 +1,7 @@
 # pytest-zulip
 
-Pytest report plugin for Zulip 
+Pytest report plugin for [Zulip](https://zulip.com/)
+Allow to send notification on Zulip chat product.
 
 ## installation
 
