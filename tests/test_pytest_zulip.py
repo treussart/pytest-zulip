@@ -1,4 +1,5 @@
 from _pytest.config import ExitCode
+from _pytest.pytester import RunResult
 
 from pytest_zulip.zulip import _trim_string
 
@@ -29,13 +30,13 @@ def run(pytester, *args):
 class TestZulip:
     def test_pass(self, pytester, set_env):
         pytester.makepyfile("def test_pass(): pass")
-        result = run(pytester)
+        result: RunResult = run(pytester)
         assert result.ret == 0
         assert "notification sent on Zulip" in result.stdout.str()
 
     def test_no_config(self, pytester):
         pytester.makepyfile("def test_no_config(): pass")
-        result = run(pytester)
+        result: RunResult = run(pytester)
         assert result.ret == ExitCode.INTERNAL_ERROR
 
     def test_pass_hook(self, pytester, set_env):
@@ -48,6 +49,6 @@ class TestZulip:
                     return f"passed: {len(reporter.stats.get('passed', []))}"
         """
         )
-        result = run(pytester)
+        result: RunResult = run(pytester)
         assert result.ret == 0
         assert "notification sent on Zulip" in result.stdout.str()
