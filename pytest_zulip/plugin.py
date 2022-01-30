@@ -1,3 +1,4 @@
+import os
 from typing import Union
 
 import pytest
@@ -33,3 +34,14 @@ def pytest_terminal_summary(
         return
     if config.getoption("--notify"):
         terminalreporter.write_sep("-", "notification sent on Zulip")
+
+
+def pytest_configure(config):
+    if config.getoption("--notify") and (
+        not os.environ.get("ZULIP_URL")
+        or not os.environ.get("ZULIP_STREAM")
+        or not os.environ.get("ZULIP_TOPIC")
+        or not os.environ.get("ZULIP_BOT_EMAIL_ADDRESS")
+        or not os.environ.get("ZULIP_BOT_API_KEY")
+    ):
+        raise Exception("You must set the environment variables for Zulip plugin")
