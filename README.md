@@ -18,6 +18,6 @@
 
 ## Modify content via hook
 
-    def zulip_create_content(session: Session, exitstatus: Union[int, ExitCode]) -> str:
+    def pytest_zulip_create_content(session: Session, exitstatus: Union[int, ExitCode]) -> str:
         reporter = session.config.pluginmanager.get_plugin('terminalreporter')
         return str(reporter.stats.get('passed', []))

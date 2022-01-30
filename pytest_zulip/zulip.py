@@ -13,7 +13,7 @@ def send_message(session: Session, exitstatus: Union[int, ExitCode]):
     if exitstatus != 0:
         status = "failed"
     topic = f"{os.environ.get('ZULIP_TOPIC')} {status}"
-    content = session.config.hook.zulip_create_content(session=session, exitstatus=exitstatus)
+    content = session.config.hook.pytest_zulip_create_content(session=session, exitstatus=exitstatus)
     if not content:
         reporter = session.config.pluginmanager.get_plugin('terminalreporter')
         content = (

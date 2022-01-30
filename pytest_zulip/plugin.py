@@ -27,5 +27,9 @@ def pytest_sessionfinish(session: Session, exitstatus: Union[int, ExitCode]):
 def pytest_terminal_summary(
     terminalreporter: TerminalReporter, exitstatus: int, config: Config
 ):
+    yield
+    # special check for pytest-xdist plugin, cause we do not want to send report for each worker.
+    if hasattr(terminalreporter.config, "workerinput"):
+        return
     if config.getoption("--notify"):
         terminalreporter.write_sep("-", "notification sent on Zulip")
