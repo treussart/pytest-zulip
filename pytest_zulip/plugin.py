@@ -16,7 +16,7 @@ def pytest_addoption(parser: Parser):
 
 
 def pytest_configure(config: Config):
-    if config.getoption("--notify"):
+    if config.getoption("--notify") and not hasattr(config, "workerinput"):
         if (
             not os.environ.get("ZULIP_URL")
             or not os.environ.get("ZULIP_STREAM")
