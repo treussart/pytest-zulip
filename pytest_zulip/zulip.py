@@ -1,6 +1,7 @@
 import os
 from typing import Union, Optional
 
+import pytest
 import requests
 from _pytest.config import ExitCode, Config
 from _pytest.main import Session
@@ -11,6 +12,7 @@ class Zulip:
     def __init__(self, config: Config):
         self.config = config
 
+    @pytest.hookimpl(trylast=True)
     def pytest_sessionfinish(self, session: Session, exitstatus: Union[int, ExitCode]):
         self.send_message(session, exitstatus)
 
