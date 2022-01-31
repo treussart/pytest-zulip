@@ -16,6 +16,7 @@ class Zulip:
     def pytest_sessionfinish(self, session: Session, exitstatus: Union[int, ExitCode]):
         self.send_message(session, exitstatus)
 
+    @pytest.hookimpl(trylast=True)
     def pytest_terminal_summary(
         self,
         terminalreporter: TerminalReporter,
