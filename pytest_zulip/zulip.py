@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Union, Optional
 
@@ -6,6 +7,9 @@ import requests
 from _pytest.config import ExitCode, Config
 from _pytest.main import Session
 from _pytest.terminal import TerminalReporter
+
+
+log = logging.getLogger(__name__)
 
 
 class Zulip:
@@ -55,14 +59,19 @@ class Zulip:
                 content, 1000, os.environ.get("ZULIP_ELLIPSIS_CHAR")
             ),
         }
-        requests.post(
-            url=os.environ.get("ZULIP_URL"),
-            auth=(
-                os.environ.get("ZULIP_BOT_EMAIL_ADDRESS"),
-                os.environ.get("ZULIP_BOT_API_KEY"),
-            ),
-            data=payload,
-        )
+        try:
+            requests.post(
+                url=os.environ.get("ZULIP_URL"),
+                auth=(
+                    os.environ.get("ZULIP_BOT_EMAIL_ADDRESS"),
+                    os.environ.get("ZULIP_BOT_API_KEY"),
+                ),
+                data=payload,
+            )
+        except Exception as e:
+            log.error(
+                f"Zulip requests.post error: {os.environ.get('ZULIP_URL')} - {e}"
+            )
 
 
 def _trim_string(s: str, limit: int, ellipsis_char: Optional[str] = "…") -> str:
