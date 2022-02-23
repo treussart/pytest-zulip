@@ -15,10 +15,16 @@ log = logging.getLogger(__name__)
 class Zulip:
     def __init__(self, config: Config):
         self.config = config
+        self.url = os.environ.get("ZULIP_URL")
 
     @pytest.hookimpl(trylast=True)
     def pytest_sessionfinish(self, session: Session, exitstatus: Union[int, ExitCode]):
-        self.send_message(session, exitstatus)
+        try:
+            self.send_message(session, exitstatus)
+        except Exception as e:
+            log.error(
+                f"Zulip send_message error: {self.url} - {e}"
+            )
 
     @pytest.hookimpl(trylast=True)
     def pytest_terminal_summary(
@@ -29,8 +35,7 @@ class Zulip:
     ):
         terminalreporter.write_sep("-", "notification sent on Zulip")
 
-    @staticmethod
-    def send_message(session: Session, exitstatus: Union[int, ExitCode]):
+    def send_message(self, session: Session, exitstatus: Union[int, ExitCode]):
         # https://zulip.com/api/send-message
         # https://zulip.com/help/format-your-message-using-markdown#status-messages
         status = "succeeded"
@@ -59,19 +64,14 @@ class Zulip:
                 content, 1000, os.environ.get("ZULIP_ELLIPSIS_CHAR")
             ),
         }
-        try:
-            requests.post(
-                url=os.environ.get("ZULIP_URL"),
-                auth=(
-                    os.environ.get("ZULIP_BOT_EMAIL_ADDRESS"),
-                    os.environ.get("ZULIP_BOT_API_KEY"),
-                ),
-                data=payload,
-            )
-        except Exception as e:
-            log.error(
-                f"Zulip requests.post error: {os.environ.get('ZULIP_URL')} - {e}"
-            )
+        requests.post(
+            url=self.url,
+            auth=(
+                os.environ.get("ZULIP_BOT_EMAIL_ADDRESS"),
+                os.environ.get("ZULIP_BOT_API_KEY"),
+            ),
+            data=payload,
+        )
 
 
 def _trim_string(s: str, limit: int, ellipsis_char: Optional[str] = "…") -> str:
