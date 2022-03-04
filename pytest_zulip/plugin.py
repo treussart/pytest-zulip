@@ -12,11 +12,11 @@ def pytest_addhooks(pluginmanager: PytestPluginManager):
 
 
 def pytest_addoption(parser: Parser):
-    parser.addoption("--notify", action="store_true", help="Notify via Zulip")
+    parser.addoption("--notify-zulip", action="store_true", help="Notify via Zulip")
 
 
 def pytest_configure(config: Config):
-    if config.getoption("--notify") and not hasattr(config, "workerinput"):
+    if config.getoption("--notify-zulip") and not hasattr(config, "workerinput"):
         if (
             not os.environ.get("ZULIP_URL")
             or not os.environ.get("ZULIP_STREAM")

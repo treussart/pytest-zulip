@@ -22,7 +22,7 @@ Optional:
 
 ## Add option to send message
 
-    pytest --notify
+    pytest --notify-zulip
 
 ## Modify content via hook
 

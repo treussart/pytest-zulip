@@ -23,7 +23,7 @@ def test_trim_string():
 
 
 def run(pytester, *args):
-    return pytester.runpytest("--notify", *args)
+    return pytester.runpytest("--notify-zulip", *args)
 
 
 class TestZulip:
