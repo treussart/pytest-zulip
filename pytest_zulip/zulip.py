@@ -41,7 +41,13 @@ class Zulip:
         status = "succeeded"
         if exitstatus != 0:
             status = "failed"
-        topic = f"{os.environ.get('ZULIP_TOPIC')} {status}"
+        topic = session.config.hook.pytest_zulip_rename_topic(
+            session=session, exitstatus=exitstatus, topic=os.environ.get('ZULIP_TOPIC')
+        )
+        if not topic:
+            topic = os.environ.get('ZULIP_TOPIC')
+        else:
+            topic = topic[0]
         content = session.config.hook.pytest_zulip_create_content(
             session=session, exitstatus=exitstatus
         )

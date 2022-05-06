@@ -8,3 +8,9 @@ def pytest_zulip_create_content(
     session: Session, exitstatus: Union[int, ExitCode]
 ) -> str:
     """Called to create content"""
+
+
+def pytest_zulip_rename_topic(
+    session: Session, exitstatus: Union[int, ExitCode], topic: str
+) -> str:
+    """Called to rename topic"""
