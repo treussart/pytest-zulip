@@ -16,11 +16,15 @@ class Zulip:
     def __init__(self, config: Config):
         self.config = config
         self.url = os.environ.get("ZULIP_URL")
+        self.only_on_failed = os.getenv("ZULIP_ONLY_ON_FAILED", False)
 
     @pytest.hookimpl(trylast=True)
     def pytest_sessionfinish(self, session: Session, exitstatus: Union[int, ExitCode]):
         try:
-            self.send_message(session, exitstatus)
+            if not self.only_on_failed:
+                self.send_message(session, exitstatus)
+            elif self.only_on_failed and exitstatus != 0:
+                self.send_message(session, exitstatus)
         except Exception as e:
             log.error(
                 f"Zulip send_message error: {self.url} - {e}"

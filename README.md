@@ -19,6 +19,7 @@ Allow to send notification on Zulip chat product.
 Optional:
 
     ZULIP_ELLIPSIS_CHAR="…"
+    ZULIP_ONLY_ON_FAILED=1
 
 ## Add option to send message
 
